@@ -5,14 +5,26 @@ const ZOOM_LEVEL = 10;
 const RADIUS = 700;
 
 let map;
+let currentPos = {};
+
+const MATHIS_ICON = L.icon({
+    iconUrl: '../assets/mathis_icon.png',
+    iconSize: [50, 50], // Size of the icon
+});
 
 export function getMap() {
     return map; // Export a function to get the map object
 }
 
 export function initializeMap() {
-    // Create a map centered at [0, 0] with zoom level 2
-    map = L.map('map').setView(PARIS_LATLNG, ZOOM_LEVEL);
+    // Create a map
+    map = L.map('map')
+
+    // Center it on Paris
+    //map = map.setView(PARIS_LATLNG, ZOOM_LEVEL);
+
+    // Center it on local position
+    map.locate({setView: true, maxZoom: ZOOM_LEVEL});
 
     // Add a tile layer to the map
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -21,12 +33,11 @@ export function initializeMap() {
 }
 
 export function onLocationFound(e) {
-    console.log("onloc");
-    var radius = 700; //e.accuracy;
+    var radius = RADIUS; // Or use e.accuracy;
 
-    L.marker(e.latlng).addTo(map)
-        .bindPopup("You are within " + radius + " meters from this point").openPopup();
+    currentPos.marker = L.marker(e.latlng, { icon: MATHIS_ICON })
+    currentPos.marker.addTo(map)
 
-    circle = L.circle(e.latlng, radius);
-    circle.addTo(map);
+    currentPos.circle = L.circle(e.latlng, radius);
+    currentPos.circle.addTo(map);
 }
