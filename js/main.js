@@ -2,6 +2,7 @@
 import 'https://unpkg.com/leaflet';
 import { initializeMap, onLocationFound, getMap, registerOnLongPress } from './map.js';
 import { itineraryOne } from './itinerary.js';
+import "./numbered_markers.js"
 
 // Setup and display the map
 initializeMap();

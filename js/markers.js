@@ -10,13 +10,21 @@ class MarkerManager {
         setInterval(this.activateMarkersNearby.bind(this), 1000);
     }
 
-    addMarker({latlng, icon = null, title = "Marker", marker_type = "inactive", mp3 = null}) {
+    addMarker({latlng, color="lightgray", title = "Marker", marker_type = "inactive", mp3 = null}) {
         console.log(`Adding ${title}`);
+
+        var icon = new L.AwesomeNumberMarkers({
+            number: this.markers.length + 1, 
+            markerColor: color,
+        });
+
         var marker = L.marker(latlng, {icon: icon});
         marker.title = title;
         marker.marker_type = marker_type;
-        marker.idx = this.markers.length;
+        marker.idx = this.markers.length + 1;
         marker.mp3 = mp3;
+
+        marker.was_seen = false;
 
         // add click event
         marker.on('click', function() {
@@ -43,12 +51,29 @@ class MarkerManager {
         return marker;
     }
 
-    updateMarker({marker, icon = null, marker_type = null}) {
-        if (icon) {
+    updateMarker({marker, marker_type = null}) {
+        if (marker_type == "active") {
+            // Check if previous markers were seen
+            if ((marker.idx > 1) && !(this.markers[marker.idx-2].was_seen)) {
+                return
+            }
+            var color = "green";
+            marker.marker_type = marker_type;
+            marker.was_seen = true;
+            var icon = new L.AwesomeNumberMarkers({
+                number: marker.idx, 
+                markerColor: color,
+            });
             marker.setIcon(icon);
         }
-        if (marker_type) {
+        if (marker_type == "inactive") {
+            var color = "lightgray";
             marker.marker_type = marker_type;
+            var icon = new L.AwesomeNumberMarkers({
+                number: marker.idx, 
+                markerColor: color,
+            });
+            marker.setIcon(icon);
         }
     }
 
@@ -65,13 +90,11 @@ class MarkerManager {
             if (isWithinCircle) {
                 self.updateMarker({
                     marker,
-                    icon : getCircleIcon("green"),
                     marker_type : "active",
                 });
             } else {
                 self.updateMarker({
-                    marker,
-                    icon : getCircleIcon("gray"),
+                    marker, 
                     marker_type : "inactive",
                 });
             }
@@ -81,14 +104,4 @@ class MarkerManager {
 
 }
 
-function getCircleIcon(color){
-    const htmlIcon = `<svg xmlns="http://www.w3.org/2000/svg" height="${ICON_SIZE}px" viewBox="0 0 384 512"><path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z" fill="${color}"/></svg>`  
-    return L.divIcon({
-        className: 'custom-marker',
-        iconSize: [ICON_SIZE, ICON_SIZE],
-        iconAnchor: [ICON_SIZE / 2, ICON_SIZE],
-        html: htmlIcon,
-      });
-}
-
-export { MarkerManager, getCircleIcon };
+export { MarkerManager };

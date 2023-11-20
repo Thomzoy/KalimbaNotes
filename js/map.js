@@ -10,6 +10,8 @@ const MATHIS_ICON = L.icon({
 });
 
 class CurrentPosition {
+    // Current position of the user
+    // Stores the marker + the circle around it
     constructor(icon, radius, color) {
         this.map = null;
         this.icon = icon;
@@ -67,7 +69,6 @@ export function onLocationFound(e) {
     console.log("Location found");
     currentPos.setInitial(e.latlng)
 }
-
 
 // For debbuging: move current position where clicked
 
