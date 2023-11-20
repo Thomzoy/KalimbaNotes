@@ -3,7 +3,7 @@ import 'https://unpkg.com/leaflet';
 import { MarkerManager } from './markers.js'
 
 function itineraryOne(){
-    var markerManager = new MarkerManager();
+    var markerManager = new MarkerManager({add_markers_at_init:false});
 
     markerManager.addMarker({
         latlng : [48.853, 2.35],
