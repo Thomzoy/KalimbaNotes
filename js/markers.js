@@ -10,23 +10,27 @@ class MarkerManager {
         setInterval(this.activateMarkersNearby.bind(this), 1000);
     }
 
-    addMarker({latlng, icon = null, title = "Marker", marker_type = "inactive"}) {
+    addMarker({latlng, icon = null, title = "Marker", marker_type = "inactive", mp3 = null}) {
         console.log(`Adding ${title}`);
         var marker = L.marker(latlng, {icon: icon});
         marker.title = title;
         marker.marker_type = marker_type;
         marker.idx = this.markers.length;
+        marker.mp3 = mp3;
 
         // add click event
         marker.on('click', function() {
-            if (marker.marker_type == "active"){
-                var audio = document.getElementById('audioPlayer');
-                
-                if (audio.paused) {
-                    audio.play();
-                } else {
-                    audio.pause();
-                    audio.currentTime = 0; // Reset audio to the beginning
+            var audio = document.getElementById('audioPlayer');
+            if (!audio.paused){
+                audio.pause();
+                audio.currentTime = 0; // Reset audio to the beginning
+            }
+            else {
+                if (marker.marker_type == "active"){
+                    audio.src = marker.mp3;
+                    if (audio.paused) {
+                        audio.play();
+                    }
                 }
             }
           });

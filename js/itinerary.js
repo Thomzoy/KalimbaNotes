@@ -10,6 +10,7 @@ function itineraryOne(){
         title : "Notre-Dame",
         icon : getCircleIcon("grey"),
         marker_type : "inactive",
+        mp3: "./assets/audio/notre_dame.mp3"
     })
     
     markerManager.addMarker({
@@ -17,6 +18,7 @@ function itineraryOne(){
         title : "Tour Eiffel",
         icon : getCircleIcon("grey"),
         marker_type : "inactive",
+        mp3: "./assets/audio/tour_eiffel.mp3",
     })
 }
 
