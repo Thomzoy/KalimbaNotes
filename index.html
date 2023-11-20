@@ -1,80 +1,14 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Interactive Map</title>
-
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-
-  <style>
-    /* Set a height for the map container */
-    #map {
-      height: 500px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your HTML Document</title>
+    <script type="module" src="file2.js"></script>
 </head>
 <body>
-
-  <!-- Map Container -->
-  <div id="map"></div>
-
-  <!-- Leaflet JavaScript -->
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-  <script>
-    // Initialize the map
-    var latitude = 48.866667;
-    var longitude = 2.333333;
-    var zoomLevel = 10;
-    var map = L.map('map').fitWorld(); //.setView([latitude, longitude], zoomLevel);
-
-    // Add a tile layer (using OpenStreetMap)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
-
-    map.locate({setView: true, maxZoom: 16});
-    function onLocationFound(e) {
-        var radius = e.accuracy;
-
-        L.marker(e.latlng).addTo(map)
-            .bindPopup("You are within " + radius + " meters from this point").openPopup();
-
-        L.circle(e.latlng, radius).addTo(map);
-    }
-
-    map.on('locationfound', onLocationFound);
-
-
-    function onLocationError(e) {
-        alert(e.message);
-    }
-
-    map.on('locationerror', onLocationError);
-
-    function locate() {
-        map.locate({setView: true, maxZoom: 16});
-        console.log("located");
-    }
-    setInterval(locate, 2000);
-
-    var markers = [
-      { coordinates: [48.853, 2.35], message: 'Notre-Dame !' },
-      { coordinates: [48.858093, 2.294694], message: 'Tour Eiffel !' },
-    ];
-
-    // Add markers to the map
-    markers.forEach(function(markerInfo) {
-      var marker = L.marker(markerInfo.coordinates).addTo(map);
-
-      // Attach a click event to each marker
-      marker.on('click', function() {
-        console.log(markerInfo.message);
-      });
-    });
-  </script>
-
+    <!-- Display the greeting in this element -->
+    <div id="greeting"></div>
 </body>
 </html>
