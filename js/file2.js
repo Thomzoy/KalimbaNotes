@@ -1,15 +1,11 @@
 // file2.js
-import { sayHello } from './file1.js';
+import 'https://unpkg.com/leaflet';
+import { initializeMap, onLocationFound, getMap } from './map.js';
 
-function greet() {
-    const greeting = sayHello();
+// Setup and display the map
+initializeMap();
 
-    // Update the DOM with the greeting
-    const greetingElement = document.getElementById('greeting');
-    if (greetingElement) {
-        greetingElement.textContent = greeting;
-    }
-}
+const map = getMap();
 
-// Call the greet function
-greet();
+// Add position and circle
+map.on('locationfound', onLocationFound); 
