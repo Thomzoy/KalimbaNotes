@@ -8,7 +8,7 @@ let map;
 let currentPos = {};
 
 const MATHIS_ICON = L.icon({
-    iconUrl: '../assets/mathis_icon.png',
+    iconUrl: './assets/mathis_icon.png',
     iconSize: [50, 50], // Size of the icon
 });
 
