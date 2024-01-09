@@ -14,8 +14,13 @@ html {
     white-space: nowrap;
 }
 
+#note-parent {
+    position:absolute;
+}
 #note-container {
-  border: 1px solid;
-  background-color: black;
-  height: 90%;
+    border: 1px solid;
+    background-color: rgb(174, 85, 85);
+    height: 500px;
+    width: 900px;
+    position: absolute;
 }
