@@ -28,32 +28,21 @@ function createNote(noteId, noteDelay){
 }
 
 function getAvailableSongs(){
-    var Songs = []
     const dropdown = document.getElementById('dropdown');
-    fetch("./songs")
-        .then(response => response.text())
-        .then(data => {
-            // Parse the HTML content to extract image filenames
-            const parser = new DOMParser();
-            const htmlDocument = parser.parseFromString(data, 'text/html');
-            const Files = Array.from(htmlDocument.querySelectorAll('a'))
-                .map(link => link.getAttribute('href'))
-                .filter(href => /\.(json)$/i.test(href));
-
-            // Display the image filenames
-            Files.forEach(filename => {
-                const option = document.createElement('option');
-                option.value = filename.toLowerCase().replace(' ', '_'); // set a unique value for each option
-                option.text = filename;
-                dropdown.add(option);
-            });
-        })
-        .catch(error => console.error('Error fetching image list:', error));
+    fetch("songlist.json")
+    .then(response => response.json())
+    .then(songs => {
+        for (var songName in songs) {
+            const option = document.createElement('option');
+            option.value = songs[songName]; // set a unique value for each option
+            option.text = songName;
+            dropdown.add(option);
+          }
+    })
        
 }
 
 function prepareSong(fileName){
-
     // Remove existing notes
     var elements = document.querySelectorAll('.square');
     elements.forEach(function(element) {
@@ -94,7 +83,7 @@ getAvailableSongs();
 
 dropdown.addEventListener('change', function() {
     // Callback function to be executed when an option is selected
-    const selectedOption = dropdown.options[dropdown.selectedIndex].text;
+    const selectedOption = dropdown.options[dropdown.selectedIndex].value;
     prepareSong(selectedOption);
     console.log(`Selected option: ${selectedOption}`);
     // Add your custom logic here
