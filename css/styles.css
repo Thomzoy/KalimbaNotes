@@ -8,19 +8,42 @@ html {
     height: 100%;
 }
 
-.note {
-    position: absolute;
-    font-size: 24px;
-    white-space: nowrap;
+@keyframes slideIn {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(256px);
+    }
 }
 
-#note-parent {
-    position:absolute;
+@-webkit-keyframes slideIn {
+    from {
+        -webkit-transform: translateY(0);
+    }
+    to {
+        -webkit-transform: translateY(256px);
+    }
 }
-#note-container {
-    border: 1px solid;
-    background-color: rgb(174, 85, 85);
-    height: 500px;
-    width: 900px;
-    position: absolute;
+.container {
+    display: flex;
 }
+
+.rectangle {
+    flex: 1;
+    height: 250px; /* Adjust the height as needed */
+    background: linear-gradient(to bottom, #abbcc7, #ffffff);
+    border: 2px solid black;
+    margin: 5px; /* Adjust the margin as needed */
+}
+
+.square {
+    position: relative;
+    width: 100%; /* Adjust the width as needed */
+    height: 20px; /* Adjust the height as needed */
+    background-color: #e74c3c; /* Adjust the color as needed */
+    animation: slideIn 2s linear;
+    -webkit-animation: slideIn 2s linear;
+    /* animation-delay: 2s; */
+}
+

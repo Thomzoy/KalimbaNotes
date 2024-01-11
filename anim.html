@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS WebKit Animation Example with Delay and TranslateX</title>
+    <link rel="stylesheet" href="./css/styles.css">
+    <style>
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="square" id="animatedElement">Hello, this is a sliding-in element!</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var animatedElement = document.getElementById('animatedElement');
+            var randomDelay = Math.random() * 5;
+
+            animatedElement.style.animationDelay = randomDelay + 's';
+            animatedElement.style.webkitAnimationDelay = randomDelay + 's';
+        });
+    </script>
+</body>
+</html>
