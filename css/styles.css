@@ -13,7 +13,7 @@ html {
         transform: translateY(0);
     }
     to {
-        transform: translateY(256px);
+        transform: translateY(250px);
     }
 }
 
@@ -22,28 +22,38 @@ html {
         -webkit-transform: translateY(0);
     }
     to {
-        -webkit-transform: translateY(256px);
+        -webkit-transform: translateY(250px);
     }
 }
 .container {
     display: flex;
+    width: 675px;
 }
 
 .rectangle {
+    position: relative;
     flex: 1;
     height: 250px; /* Adjust the height as needed */
-    background: linear-gradient(to bottom, #abbcc7, #ffffff);
+    /* background: linear-gradient(to bottom, #abbcc7, #ffffff); */
     border: 2px solid black;
     margin: 5px; /* Adjust the margin as needed */
 }
 
+.rectangle-inside {
+    background: linear-gradient(to bottom, #abbcc7, #ffffff);
+}
+
+.rectangle-outside {
+    background: linear-gradient(to bottom, #abbcc7, #ff0000);
+}
+
 .square {
-    position: relative;
+    position: absolute;
     width: 100%; /* Adjust the width as needed */
     height: 20px; /* Adjust the height as needed */
     background-color: #e74c3c; /* Adjust the color as needed */
-    animation: slideIn 2s linear;
-    -webkit-animation: slideIn 2s linear;
+    animation: slideIn 1s linear;
+    -webkit-animation: slideIn 1s linear;
     /* animation-delay: 2s; */
 }
 
