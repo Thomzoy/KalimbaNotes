@@ -9,20 +9,30 @@ html {
 }
 
 @keyframes slideIn {
-    from {
+    0% {
+        opacity: 0%;
+    }
+    50% {
+        opacity: 100%;
         transform: translateY(0);
     }
-    to {
-        transform: translateY(250px);
+    100% {
+        opacity: 100%;
+        transform: translateY(230px);
     }
 }
 
 @-webkit-keyframes slideIn {
-    from {
+    0% {
+        opacity: 0%;
+    }
+    50% {
+        opacity:100%;
         -webkit-transform: translateY(0);
     }
-    to {
-        -webkit-transform: translateY(250px);
+    100% {
+        opacity:100%;
+        -webkit-transform: translateY(230px);
     }
 }
 .container {
@@ -37,23 +47,35 @@ html {
     /* background: linear-gradient(to bottom, #abbcc7, #ffffff); */
     border: 2px solid black;
     margin: 5px; /* Adjust the margin as needed */
+    display: flex;
+    text-align: center;
 }
 
+.note-name {
+    /* position: relative; */
+    align-self: flex-end;
+    display: inline-block;
+    text-align: center;
+    margin: 0 auto;
+  }
+
 .rectangle-inside {
+    position: relative;
     background: linear-gradient(to bottom, #abbcc7, #ffffff);
 }
 
 .rectangle-outside {
-    background: linear-gradient(to bottom, #abbcc7, #ff0000);
+    position: relative;
+    background: linear-gradient(to bottom, #abbcc7,#553ce7);
 }
 
 .square {
+    opacity: 0;
     position: absolute;
     width: 100%; /* Adjust the width as needed */
     height: 20px; /* Adjust the height as needed */
-    background-color: #e74c3c; /* Adjust the color as needed */
-    animation: slideIn 1s linear;
-    -webkit-animation: slideIn 1s linear;
+    background-color: blue; /* Adjust the color as needed */
+    animation: slideIn 5s linear;
+    -webkit-animation: slideIn 5s linear;
     /* animation-delay: 2s; */
 }
-
