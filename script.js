@@ -38,6 +38,8 @@ const FMParams = {
 
 function onAnimationEnd(el, synth) {
 
+    const now = Tone.now()
+
     var noteToPlay = el.parentNode.innerText;
     noteToPlay = noteToPlay.replace("°°","6")
     noteToPlay = noteToPlay.replace("°","5");
@@ -45,7 +47,12 @@ function onAnimationEnd(el, synth) {
         noteToPlay += "4";
     }
 
-    synth.triggerAttackRelease(noteToPlay, "8n");
+    //synth.triggerAttackRelease(noteToPlay, "8n");
+    synth.triggerAttackRelease(
+        noteToPlay, 
+        0.5,
+        now ,
+        )
 
     el.parentNode.classList.add('rectangle-outside');
 
