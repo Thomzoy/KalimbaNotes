@@ -1,11 +1,11 @@
-function preventDefault(e){
+function preventDefault(e) {
     e.preventDefault();
 }
 
-function disableScroll(){
+function disableScroll() {
     document.body.addEventListener('touchmove', preventDefault, { passive: false });
 }
-function enableScroll(){
+function enableScroll() {
     document.body.removeEventListener('touchmove', preventDefault);
 }
 
@@ -17,35 +17,41 @@ const FMParams = {
     "harmonicity": 8,
     "modulationIndex": 2,
     "oscillator": {
-              "type": "sine"
+        "type": "sine"
     },
     "envelope": {
-              "attack": 0.001,
-              "decay": 2,
-              "sustain": 0.1,
-              "release": 2
+        "attack": 0.001,
+        "decay": 2,
+        "sustain": 0.1,
+        "release": 2
     },
     "modulation": {
-              "type": "square"
+        "type": "square"
     },
     "modulationEnvelope": {
-              "attack": 0.002,
-              "decay": 0.2,
-              "sustain": 0,
-              "release": 0.2
+        "attack": 0.002,
+        "decay": 0.2,
+        "sustain": 0,
+        "release": 0.2
     }
+}
+
+function addOctaveValue(note) {
+    var noteToPlay = note.replace("°°", "6")
+    noteToPlay = noteToPlay.replace("°", "5");
+    if (noteToPlay.length === 1) {
+        noteToPlay += "4";
+    }
+    return noteToPlay
 }
 
 function onAnimationEnd(el, synth) {
 
-    var noteToPlay = el.parentNode.innerText;
-    noteToPlay = noteToPlay.replace("°°","6")
-    noteToPlay = noteToPlay.replace("°","5");
-    if (noteToPlay.length === 1) {
-        noteToPlay += "4";
-    }
+    var noteToPlay = addOctaveValue(
+        el.parentNode.innerText
+    );
 
-    synth.triggerAttackRelease(noteToPlay, "8n");
+    // synth.triggerAttackRelease(noteToPlay, 1);
 
     el.parentNode.classList.add('rectangle-outside');
 
@@ -55,9 +61,9 @@ function onAnimationEnd(el, synth) {
         el.parentNode.classList.remove('rectangle-outside');
         el.remove();
     }, 500);
-  }
+}
 
-function createNote(noteId, noteDelay, synth){
+function createNote(noteId, noteDelay, synth) {
 
     var rect = document.getElementById(noteId)
     var element = document.createElement("div");
@@ -70,69 +76,94 @@ function createNote(noteId, noteDelay, synth){
     element.style.animationDuration = "2500ms"
     element.style.webkitAnimationDuration = "2500ms"
 
-    element.addEventListener('animationend', () => onAnimationEnd(element, synth));
+    // element.addEventListener('animationend', () => onAnimationEnd(element, synth));
 
     return [element, rect]
 }
 
-function getAvailableSongs(){
+function getAvailableSongs() {
     const dropdown = document.getElementById('dropdown');
     fetch("songlist.json")
-    .then(response => response.json())
-    .then(songs => {
-        for (var songName in songs) {
-            const option = document.createElement('option');
-            option.value = songs[songName]; // set a unique value for each option
-            option.text = songName;
-            dropdown.add(option);
-          }
-    })
-       
+        .then(response => response.json())
+        .then(songs => {
+            for (var songName in songs) {
+                const option = document.createElement('option');
+                option.value = songs[songName]; // set a unique value for each option
+                option.text = songName;
+                dropdown.add(option);
+            }
+        })
+
 }
 
-function prepareSong(fileName){
+function prepareSong(fileName) {
     // Remove existing notes
     var elements = document.querySelectorAll('.square');
-    elements.forEach(function(element) {
+    elements.forEach(function (element) {
         element.parentNode.removeChild(element);
     });
 
-    // Prepare synth
+    const synth = new Tone.PolySynth(
+        Tone.FMSynth, 
+        FMParams,
+    ).toDestination();
     
-    const synth = new Tone.PolySynth(Tone.FMSynth, FMParams).toDestination();
-
-    // Using fetch API
+    // Prepare synth
     fetch(`songs/${fileName}`)
-    .then(response => response.json())
-    .then(data => {
+        .then(response => response.json())
+        .then(data => {
 
-        // Get notes and sort by reverse time onset
-        var notes = data["Notes"]
-        notes.sort((a, b) => b[0] - a[0]);
+            Tone.Transport.schedule(function (time) {
 
-        var notes_to_display = []
-        
-        // Iterate over each note
-        notes.forEach(function(note) {
-            var noteDelay = DELAY * note[0];
-            var noteId = [IndexToNoteTable[332-note[1]]][0];
-            notes_to_display.push(
-                createNote(noteId, noteDelay, synth)
-            )
+                synth.debug = true;
+                //synth.maxPolyphony = 64;
+                console.log(synth.maxPolyphony);
+                
+                const now = Tone.now();
+                // Get notes and sort by reverse time onset
+                var notes = data["Notes"]
+                notes.sort((a, b) => b[0] - a[0]);
+
+                var notes_to_display = []
+
+                // Iterate over each note
+                notes.forEach(function (note) {
+                    var noteDelay = DELAY * note[0];
+                    var noteId = [IndexToNoteTable[332 - note[1]]][0];
+                    const noteAndParent = createNote(noteId, noteDelay, synth)
+                    var noteToPlay = addOctaveValue(
+                        noteAndParent[1].innerText // e.g. C° to C5
+                    )
+                    console.log(noteToPlay);
+                    synth.triggerAttackRelease(
+                        noteToPlay, 
+                        0.5,
+                        now + 2.5 + noteDelay * 0.001,
+                        ) //now + 2.5 + 0.5 + noteDelay * 0.001);
+                    // synth.triggerRelease(noteToPlay, now + 2.5 + 0.5 + noteDelay * 0.001);
+                    synth._voices.splice(synth._voices.indexOf(noteToPlay), 1);
+                    Tone.Draw.schedule(() => {
+                        noteAndParent[1].appendChild(noteAndParent[0]);
+                    }, now + noteDelay * 0.001
+                    );
+                });
+                setInterval(() => {
+                    console.log(synth._activeVoices.length);
+                    synth._collectGarbage();
+                }, 200);
+            }, 0);
+            Tone.Transport.start("+0.5");
+        })
+        .catch(error => {
+            console.error('Error reading JSON file:', error);
         });
 
-        notes_to_display.forEach(function(noteAndParent) {
-            noteAndParent[1].appendChild(noteAndParent[0])
-        })
-    })
-    .catch(error => {
-        console.error('Error reading JSON file:', error);
-    });
+    // Using fetch API
 }
 
 getAvailableSongs();
 
-dropdown.addEventListener('change', function() {
+dropdown.addEventListener('change', function () {
     const selectedOption = dropdown.options[dropdown.selectedIndex].value;
     prepareSong(selectedOption);
     //play a middle 'C' for the duration of an 8th note
@@ -140,5 +171,10 @@ dropdown.addEventListener('change', function() {
 
 
 dropdown.addEventListener('click', async () => {
-	await Tone.start()
+    await Tone.start()
+    console.log("Audio Ready");
+    Tone.context.resume();
+    var el = document.createElement("div");
+    el.innerText = "OK !";
+    document.body.appendChild(el);
 })

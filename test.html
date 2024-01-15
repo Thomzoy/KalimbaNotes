@@ -3,32 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    .rectangle {
-      width: 200px; /* Set your desired width */
-      height: 100px; /* Set your desired height */
-      background-color: #3498db; /* Set your desired background color */
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .content {
-      color: #fff; /* Set your desired text color */
-      text-align: center;
-      margin-bottom: 10px; /* Adjust this value to give some space between text and bottom */
-    }
-
-    .other-div {
-      background-color: aqua;
-    }
-  </style>
+  <title>Tone.js Transport Schedule Example</title>
+  <!-- Include Tone.js library -->
+  <script src="https://cdn.jsdelivr.net/npm/tone@14.8.37"></script>
 </head>
 <body>
-  <div class="rectangle">
-    <div class="content">Your Text Content</div>
-    <div class="other-div">Other Content</div>
-  </div>
+  <h1>Tone.js Transport Schedule Example</h1>
+
+  <!-- Add a button to start Tone.js -->
+  <button id="startButton">Start Tone.js</button>
+
+  <div id="noteDisplay"></div>
+
+  <script>
+    // Function to start Tone.js
+    function startTone() {
+      // Start Tone.js
+      Tone.start();
+
+      // Create a div to display notes
+      const noteDisplay = document.getElementById("noteDisplay");
+
+      // Schedule an event at 1 minute (1m) into the audio transport timeline
+      Tone.Transport.schedule(function(time){
+        // This function will be called at the specified time
+        console.log("Event scheduled at time:", time);
+
+        const synth = new Tone.PolySynth(Tone.Synth).toDestination();
+        synth.debug = true;
+        const now = Tone.now();
+        const notes = ["D4", "F4", "A4", "C5", "E5"];
+
+        // Trigger each note
+        notes.forEach((note, index) => {
+          synth.triggerAttack(note, now + index * 0.5);
+
+          // Create a div element for each note and append it to the noteDisplay div
+          const noteDiv = document.createElement("div");
+          noteDiv.textContent = note;
+          noteDisplay.appendChild(noteDiv);
+
+          // Schedule the removal of the div after a short delay (e.g., 500 milliseconds)
+          Tone.Draw.schedule(() => {
+            noteDiv.remove();
+          }, now + index * 0.5 + 0.5 * 2); // Remove after 2 beats (adjust as needed)
+        });
+
+        // Trigger the release of all notes after a certain duration
+        synth.triggerRelease(notes, now + 4);
+      }, 0);
+
+      // Start the transport to begin scheduling and playing
+      Tone.Transport.start();
+    }
+
+    // Attach the startTone function to the button click event
+    document.getElementById("startButton").addEventListener("click", startTone);
+  </script>
 </body>
 </html>
