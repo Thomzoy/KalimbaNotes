@@ -107,7 +107,17 @@ function prepareSong(fileName) {
         Tone.FMSynth, 
         FMParams,
     ).toDestination();
-    
+
+    window.synth = synth;
+
+    setInterval(
+        () => {
+          var el = document.getElementById("the-note");
+          const n = synth._activeVoices.length + "-" + synth._activeVoices.length + "-" + synth._availableVoices.length;
+          el.innerText = n;
+        }, 250
+      )
+
     // Prepare synth
     fetch(`songs/${fileName}`)
         .then(response => response.json())
@@ -119,10 +129,10 @@ function prepareSong(fileName) {
                 //synth.maxPolyphony = 64;
                 console.log(synth.maxPolyphony);
                 
-                const now = Tone.now();
+                // const now = Tone.now();
                 // Get notes and sort by reverse time onset
                 var notes = data["Notes"]
-                notes.sort((a, b) => b[0] - a[0]);
+                notes.sort((a, b) => -b[0] + a[0]);
 
                 var notes_to_display = []
 
@@ -138,20 +148,17 @@ function prepareSong(fileName) {
                     synth.triggerAttackRelease(
                         noteToPlay, 
                         0.5,
-                        now + 2.5 + noteDelay * 0.001,
+                        time + 2.5 + noteDelay * 0.001,
                         ) //now + 2.5 + 0.5 + noteDelay * 0.001);
                     // synth.triggerRelease(noteToPlay, now + 2.5 + 0.5 + noteDelay * 0.001);
-                    synth._voices.splice(synth._voices.indexOf(noteToPlay), 1);
+                    // synth._voices.splice(synth._voices.indexOf(noteToPlay), 1);
                     Tone.Draw.schedule(() => {
                         noteAndParent[1].appendChild(noteAndParent[0]);
-                    }, now + noteDelay * 0.001
+                    }, time + noteDelay * 0.001
                     );
                 });
-                setInterval(() => {
-                    console.log(synth._activeVoices.length);
-                    synth._collectGarbage();
-                }, 200);
             }, 0);
+            
             Tone.Transport.start("+0.5");
         })
         .catch(error => {

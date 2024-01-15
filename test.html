@@ -23,20 +23,20 @@
 
       // Create a div to display notes
       const noteDisplay = document.getElementById("noteDisplay");
-
+      const synth = new Tone.PolySynth(Tone.Synth).toDestination();
       // Schedule an event at 1 minute (1m) into the audio transport timeline
       Tone.Transport.schedule(function(time){
         // This function will be called at the specified time
         console.log("Event scheduled at time:", time);
 
-        const synth = new Tone.PolySynth(Tone.Synth).toDestination();
+        
         synth.debug = true;
-        const now = Tone.now();
+        // const now = Tone.now();
         const notes = ["D4", "F4", "A4", "C5", "E5"];
 
         // Trigger each note
         notes.forEach((note, index) => {
-          synth.triggerAttack(note, now + index * 0.5);
+          synth.triggerAttackRelease(note, 1, time + index * 0.5);
 
           // Create a div element for each note and append it to the noteDisplay div
           const noteDiv = document.createElement("div");
@@ -46,11 +46,19 @@
           // Schedule the removal of the div after a short delay (e.g., 500 milliseconds)
           Tone.Draw.schedule(() => {
             noteDiv.remove();
-          }, now + index * 0.5 + 0.5 * 2); // Remove after 2 beats (adjust as needed)
+          }, time + index * 0.5 + 0.5 * 2); // Remove after 2 beats (adjust as needed)
         });
 
         // Trigger the release of all notes after a certain duration
-        synth.triggerRelease(notes, now + 4);
+        //synth.triggerRelease(notes, now + 4);
+
+        setInterval(
+          () => {
+            el = document.getElementById("the-note");
+            const n = synth._voices.length;
+            el.innerText = n;
+          }, 250
+        )
       }, 0);
 
       // Start the transport to begin scheduling and playing
@@ -59,6 +67,8 @@
 
     // Attach the startTone function to the button click event
     document.getElementById("startButton").addEventListener("click", startTone);
+
   </script>
+  <div id="the-note">Note</div>
 </body>
 </html>

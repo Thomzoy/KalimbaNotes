@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tone.js Transport Schedule Example</title>
+  <!-- Include Tone.js library -->
+  <script src="https://cdn.jsdelivr.net/npm/tone@14.8.37"></script>
+</head>
+<body>
+  <h1>Tone.js Transport Schedule Example</h1>
+
+  <!-- Add a button to start Tone.js -->
+  <button id="startButton">Start Tone.js</button>
+
+  <div id="noteDisplay"></div>
+
+  <script>
+
+    // Function to start Tone.js
+    var synth = new Tone.Synth().toMaster();
+
+var music = [{"time": 0, "note": "A4", "duration": "16n"},
+         {"time": 3, "note": "A4", "duration": "8n"},
+         {"time": 3.1, "note": "G4", "duration": "4n"}];
+
+function playMusic(){
+    var part = new Tone.Part(function(time, note){
+        //the notes given as the second element in the array
+        //will be passed in as the second argument
+        console.log(note);
+        synth.triggerAttackRelease(note.note, note.duration, time);
+    }, music).start(0);
+
+    Tone.Transport.start();
+}
+    // Attach the startTone function to the button click event
+    document.getElementById("startButton").addEventListener("click", playMusic);
+
+  </script>
+  <div id="the-note">Note</div>
+</body>
+</html>
