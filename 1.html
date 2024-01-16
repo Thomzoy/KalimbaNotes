@@ -9,7 +9,9 @@
 </head>
 <body>
   <h1>Tone.js Transport Schedule Example</h1>
-
+  <button id="start-stop">start</button>
+    <button id="releaseAll">releaseAll</button>
+    <button id="releaseManual">release individually</button>
   <!-- Add a button to start Tone.js -->
   <button id="startButton">Start Tone.js</button>
 
@@ -17,25 +19,60 @@
 
   <script>
 
-    // Function to start Tone.js
-    var synth = new Tone.Synth().toMaster();
+const synth = new Tone.PolySynth().toDestination()
 
-var music = [{"time": 0, "note": "A4", "duration": "16n"},
-         {"time": 3, "note": "A4", "duration": "8n"},
-         {"time": 3.1, "note": "G4", "duration": "4n"}];
+function start(){
+  // clear the timeline of any previous events
+  Tone.start();
+  Tone.Transport.cancel(0)
+  fetch(`songs/song2.json`)
+        .then(response => response.json())
+        .then(data => {
 
-function playMusic(){
-    var part = new Tone.Part(function(time, note){
-        //the notes given as the second element in the array
-        //will be passed in as the second argument
-        console.log(note);
-        synth.triggerAttackRelease(note.note, note.duration, time);
-    }, music).start(0);
+          console.log("Here");
+            synth.debug = true;
+            //synth.maxPolyphony = 64;
 
-    Tone.Transport.start();
+            //var now = Tone.now();
+            // Get notes and sort by reverse time onset
+            var notes = data["Notes"]
+            notes.sort((a, b) => -b[0] + a[0]);
+
+            var notes_to_display = []
+
+            // Iterate over each note
+            notes.forEach(function (note, index) {
+              // get a random note
+              const noteBis = Tone.Midi(Math.floor(Math.random() * 10) + 60, "midi").toNote()
+              // schedule the notes along the timeline
+              Tone.Transport.scheduleOnce(time => {
+                synth.triggerAttackRelease(noteBis, 0.5, time)
+              }, index * 0.1)
+            })
+            // start the transport
+            Tone.Transport.start()
+}       ) .catch(error => {
+            console.error('Error reading JSON file:', error);
+        });
+      }
+
+function stop(){
+  Tone.Transport.stop()
 }
-    // Attach the startTone function to the button click event
-    document.getElementById("startButton").addEventListener("click", playMusic);
+
+document.querySelector('#start-stop').addEventListener('click', () => {
+  if (Tone.Transport.state === "started"){
+    document.querySelector('button').textContent = "start"
+    stop()
+  } else {
+    document.querySelector('button').textContent = "stop"
+    start()
+  }
+})
+
+document.querySelector('#releaseAll').addEventListener('click', () => {
+  synth.releaseAll()
+})
 
   </script>
   <div id="the-note">Note</div>

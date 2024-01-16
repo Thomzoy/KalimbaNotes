@@ -17,6 +17,54 @@
 
   <script>
     // Function to start Tone.js
+
+    fetch(`songs/song2.json`)
+        .then(response => response.json())
+        .then(data => {
+
+            synth.debug = true;
+            //synth.maxPolyphony = 64;
+
+            var now = Tone.now();
+            // Get notes and sort by reverse time onset
+            var notes = data["Notes"]
+            notes.sort((a, b) => -b[0] + a[0]);
+
+            var notes_to_display = []
+
+            // Iterate over each note
+            notes.forEach(function (note) {
+                var noteDelay = DELAY * note[0];
+                var noteId = [IndexToNoteTable[332 - note[1]]][0];
+                const noteAndParent = createNote(noteId, noteDelay, synth)
+                var noteToPlay = addOctaveValue(
+                    noteAndParent[1].innerText // e.g. C° to C5
+                )
+
+                console.log(noteToPlay + "scheduled at " + now + 2.5 + noteDelay * 0.001);
+
+                Tone.Transport.scheduleOnce(time => {
+                    synth.triggerAttackRelease(
+                        noteToPlay,
+                        0.5,
+                        time,
+                    )
+                }, now + 2.5 + noteDelay * 0.001)
+                //now + 2.5 + 0.5 + noteDelay * 0.001);
+                // synth.triggerRelease(noteToPlay, now + 2.5 + 0.5 + noteDelay * 0.001);
+                // synth._voices.splice(synth._voices.indexOf(noteToPlay), 1);
+                // Tone.Draw.schedule(() => {
+                //     noteAndParent[1].appendChild(noteAndParent[0]);
+                // }, time + noteDelay * 0.001
+                // );
+            });
+
+            Tone.Transport.start("+0.5");
+        })
+        .catch(error => {
+            console.error('Error reading JSON file:', error);
+        });
+
     function startTone() {
       // Start Tone.js
       Tone.start();
